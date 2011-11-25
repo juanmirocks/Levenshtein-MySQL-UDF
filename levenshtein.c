@@ -297,7 +297,6 @@ longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *er
   const int rsize = lsize + r; //right space for deletions, rsize >= lsize (rsize == lsize iff r == 0)
   const int stripsize = lsize + rsize + 1; // + 1 for the diagonal cell
   const int stripsizem1 = stripsize - 1; //see later, not to repeat calculations
-  const int mpr = m + r;
 
   int d[2 * stripsize]; //Current and last rows
   int currentrow;
@@ -305,7 +304,6 @@ longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *er
 
 
   /* Initialization */
-  n++; m++;
 
   //currentrow = 0
   int i;
@@ -323,9 +321,9 @@ longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *er
   int j, jv, bl, br;
   int im1 = 0, jm1;
   int a, b, c, min; //for minimum function, coded directly here for maximum speed
-  for (i = 1; i < n; i++) {
+  for (i = 1; i <= n; i++) {
 
-    //bl = max(i - lsize, 0), br = min(i + rsize, m + r)
+    //bl = max(i - lsize, 0), br = min(i + rsize, m)
     bl = i - lsize;
     if (bl < 0) {
       jv = abs(bl); //no space for all allowed insertions
@@ -334,8 +332,8 @@ longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *er
     else
       jv = 0;
     br = i + rsize;
-    if (br > mpr)
-      br = mpr;
+    if (br > m)
+      br = m;
 
     jm1 = bl - 1;
     for (j = bl; j <= br; j++) {
