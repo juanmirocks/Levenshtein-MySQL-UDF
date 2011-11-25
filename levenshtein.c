@@ -366,7 +366,7 @@ longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *er
     }
 
     //obsv: the cost of a following diagonal never decreases
-    if (ignore == d[currentrow + lsize + r])
+    if (d[currentrow + lsize + r] > k)
       return ignore;
 
     im1 = i;
