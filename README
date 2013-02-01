@@ -1,4 +1,4 @@
-General Levenshtein algorithm and k-bounded levenshtein distance algorithm (linear time, constant space) implemented in C as a MySQL UDF.
+General Levenshtein algorithm, k-bounded levenshtein distance algorithm (linear time, constant space), and levenshtein ratio implemented in C as a MySQL UDF.
 
 Installation instructions in the same .c file.
 

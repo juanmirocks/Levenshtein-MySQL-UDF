@@ -13,6 +13,7 @@
  *
  * CREATE FUNCTION levenshtein RETURNS INT SONAME 'levenshtein.so';
  * CREATE FUNCTION levenshtein_k RETURNS INT SONAME 'levenshtein.so';
+ * CREATE FUNCTION levenshtein_ratio RETURNS INT SONAME 'levenshtein.so';
  *
  *
  * Some Credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
