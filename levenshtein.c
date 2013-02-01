@@ -41,6 +41,7 @@ typedef long long longlong;
 #endif
 #include <mysql.h>
 #include <ctype.h>
+#include <math.h>
 
 
 #ifdef HAVE_DLOPEN
@@ -87,6 +88,23 @@ longlong 	levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *e
 
 
 
+/**
+ * Levenshtein ratio
+ *
+ * @param s string 1 to compare, length n
+ * @param t string 2 to compare, length m
+ * @result levenshtein ratio between s and t
+ *
+ * @time O(nm), quadratic
+ * @space O(nm)
+ */
+
+my_bool   levenshtein_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+void    levenshtein_ratio_deinit(UDF_INIT *initid);
+longlong  levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+
+
+
 
 //(Expected) maximum number of digits to return
 #define LEVENSHTEIN_MAX 3
@@ -130,6 +148,16 @@ inline int minimum(int a, int b, int c) {
   if (c < min)
     min = c;
   return min;
+}
+
+
+inline int maximum(int a, int b, int c) {
+  int max = a;
+  if (b > max)
+    max = b;
+  if (c > max)
+    max = c;
+  return max;
 }
 
 
@@ -191,6 +219,49 @@ longlong levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *erro
   return (longlong) d[p];
 }
 
+
+
+
+my_bool levenshtein_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+  if ((args->arg_count != 2) ||
+      (args->arg_type[0] != STRING_RESULT || args->arg_type[1] != STRING_RESULT)) {
+    strcpy(message, "Function requires 2 arguments, (string, string)");
+    return 1;
+  }
+
+  //matrix for levenshtein calculations of size n+1 x m+1 (+1 for base values)
+  int *d = (int *) malloc(sizeof(int) * (args->lengths[0] + 1) * (args->lengths[1] + 1));
+  if (d == NULL) {
+    strcpy(message, "Failed to allocate memory");
+    return 1;
+  }
+
+  initid->ptr = (char*) d;
+  initid->max_length = LEVENSHTEIN_MAX;
+  initid->maybe_null = 0; //doesn't return null
+
+  return 0;
+}
+
+
+void levenshtein_ratio_deinit(UDF_INIT *initid) {
+  if (initid->ptr != NULL) {
+    free(initid->ptr);
+  }
+}
+
+
+longlong levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+  const char *s = args->args[0];
+  const char *t = args->args[1];
+
+  int n = (s == NULL) ? 0 : args->lengths[0];
+  int m = (t == NULL) ? 0 : args->lengths[1];
+
+  float r = (float) levenshtein(initid, args, is_null, error);
+
+  return (longlong) llround((1 - r / maximum(n, m, 0)) * 100);
+}
 
 
 
