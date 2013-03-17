@@ -152,12 +152,10 @@ inline int minimum(int a, int b, int c) {
 }
 
 
-inline int maximum(int a, int b, int c) {
+inline int maximum(int a, int b) {
   int max = a;
   if (b > max)
     max = b;
-  if (c > max)
-    max = c;
   return max;
 }
 
@@ -261,7 +259,7 @@ longlong levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char
 
   float r = (float) levenshtein(initid, args, is_null, error);
 
-  return (longlong) llround((1 - r / maximum(n, m, 0)) * 100);
+  return (longlong) llround((1 - r / maximum(n, m)) * 100);
 }
 
 
