@@ -1,5 +1,5 @@
 /*
- * @author Juan Miguel Cejuela, jmcejuela
+ * @author Juan Miguel Cejuela, @jmcejuela
  *
  *
  * INSTALLATION
@@ -16,7 +16,10 @@
  * CREATE FUNCTION levenshtein_ratio RETURNS REAL SONAME 'levenshtein.so';
  *
  *
- * Some Credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
+ * Some credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
+ *
+ * Other contributors:
+ * - popthestack
  *
  */
 
