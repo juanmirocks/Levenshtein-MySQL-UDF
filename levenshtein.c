@@ -42,7 +42,6 @@ typedef long long longlong;
 #endif
 #include <mysql.h>
 #include <ctype.h>
-#include <math.h>
 
 
 #ifdef HAVE_DLOPEN
