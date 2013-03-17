@@ -13,7 +13,7 @@
  *
  * CREATE FUNCTION levenshtein RETURNS INT SONAME 'levenshtein.so';
  * CREATE FUNCTION levenshtein_k RETURNS INT SONAME 'levenshtein.so';
- * CREATE FUNCTION levenshtein_ratio RETURNS INT SONAME 'levenshtein.so';
+ * CREATE FUNCTION levenshtein_ratio RETURNS REAL SONAME 'levenshtein.so';
  *
  *
  * Some Credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
@@ -102,7 +102,7 @@ longlong 	levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *e
 
 my_bool   levenshtein_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void    levenshtein_ratio_deinit(UDF_INIT *initid);
-longlong  levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+double  levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 
 
@@ -250,16 +250,18 @@ void levenshtein_ratio_deinit(UDF_INIT *initid) {
 }
 
 
-longlong levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+double levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
   const char *s = args->args[0];
   const char *t = args->args[1];
 
   int n = (s == NULL) ? 0 : args->lengths[0];
   int m = (t == NULL) ? 0 : args->lengths[1];
 
-  float r = (float) levenshtein(initid, args, is_null, error);
+  double dist = (double) levenshtein(initid, args, is_null, error);
+  double maxlen  = maximum(n, m);
 
-  return (longlong) llround((1 - r / maximum(n, m)) * 100);
+  if (maxlen == 0) return 0.0;
+  else return 1.0 - dist/maxlen;
 }
 
 
