@@ -14,6 +14,7 @@
  * CREATE FUNCTION levenshtein RETURNS INT SONAME 'levenshtein.so';
  * CREATE FUNCTION levenshtein_k RETURNS INT SONAME 'levenshtein.so';
  * CREATE FUNCTION levenshtein_ratio RETURNS REAL SONAME 'levenshtein.so';
+ * CREATE FUNCTION levenshtein_k_ratio RETURNS REAL SONAME 'levenshtein.so';
  *
  *
  * Some credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
@@ -484,12 +485,14 @@ my_bool levenshtein_k_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message
 double levenshtein_k_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
   const char *s = args->args[0];
   const char *t = args->args[1];
+  const int k = *((int*) args->args[2]);
 
   int n = (s == NULL) ? 0 : args->lengths[0];
   int m = (t == NULL) ? 0 : args->lengths[1];
 
   double dist = (double) levenshtein_k(initid, args, is_null, error);
   double maxlen = maximum(n, m);
+  if(dist > k) return 0.0;
 
   if (maxlen == 0) return 0.0;
   else return 1.0 - dist/maxlen;
