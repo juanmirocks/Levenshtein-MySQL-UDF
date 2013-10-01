@@ -14,6 +14,7 @@
  * CREATE FUNCTION levenshtein RETURNS INT SONAME 'levenshtein.so';
  * CREATE FUNCTION levenshtein_k RETURNS INT SONAME 'levenshtein.so';
  * CREATE FUNCTION levenshtein_ratio RETURNS REAL SONAME 'levenshtein.so';
+ * CREATE FUNCTION levenshtein_k_ratio RETURNS REAL SONAME 'levenshtein.so';
  *
  *
  * Some credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
@@ -107,6 +108,21 @@ void    levenshtein_ratio_deinit(UDF_INIT *initid);
 double  levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 
+/**
+ * Levenshtein ratio with threshold k (maximum allowed distance)
+ *
+ * @param s string 1 to compare, length n
+ * @param t string 2 to compare, length m
+ * @param k maximum threshold
+ * @result levenshtein ratio between s and t and t or >k (not specified) if this is greater than k)
+ * 
+ * @time O(kl), linear: where 1 = min(n, m)
+ * @space O(k), contant
+ */
+
+my_bool levenshtein_k_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+void    levenshtein_k_ratio_deinit(UDF_INIT *initid);
+double  levenshtein_k_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 
 //(Expected) maximum number of digits to return
@@ -452,6 +468,35 @@ longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *er
   return (longlong) d[lastrow + lsize + r]; //d[n, m]
 }
 
+
+my_bool levenshtein_k_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+  if ((args->arg_count != 3) ||
+      (args->arg_type[0] != STRING_RESULT || args->arg_type[1] != STRING_RESULT || args->arg_type[2] != INT_RESULT)) {
+    strcpy(message, "Function requires 3 arguments, (string, string, int)");
+    return 1;
+  }
+
+  initid->max_length = LEVENSHTEIN_MAX;
+  initid->maybe_null = 0; //doesn't return null
+
+  return 0;
+}
+
+double levenshtein_k_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+  const char *s = args->args[0];
+  const char *t = args->args[1];
+  const int k = *((int*) args->args[2]);
+
+  int n = (s == NULL) ? 0 : args->lengths[0];
+  int m = (t == NULL) ? 0 : args->lengths[1];
+
+  double dist = (double) levenshtein_k(initid, args, is_null, error);
+  double maxlen = maximum(n, m);
+  if(dist > k) return 0.0;
+
+  if (maxlen == 0) return 0.0;
+  else return 1.0 - dist/maxlen;
+}
 
 
 #endif /* HAVE_DLOPEN */
