@@ -80,7 +80,7 @@ longlong 	levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *err
  * @param s string 1 to compare, length n
  * @param t string 2 to compare, length m
  * @param k maximum threshold
- * @result levenshtein distance between s and t or >k (not specified) if this is greater than k
+ * @result levenshtein distance between s and t or >k (not specified) if the distance is greater than k
  *
  * @time O(kl), linear; where l = min(n, m)
  * @space O(k), constant
