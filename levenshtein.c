@@ -82,7 +82,6 @@ inline int maximum(int a, int b) {
  * @time O(nm), quadratic
  * @space O(nm)
  */
-
 my_bool  levenshtein_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void     levenshtein_deinit(UDF_INIT *initid);
 longlong levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
@@ -221,8 +220,7 @@ longlong levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *erro
   return (longlong) d[p];
 }
 
-
-
+//-------------------------------------------------------------------------
 
 my_bool levenshtein_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
   if ((args->arg_count != 2) ||
@@ -264,8 +262,7 @@ double levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *
   return 1.0 - dist/maxlen;
 }
 
-
-
+//-------------------------------------------------------------------------
 
 my_bool levenshtein_k_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
   if ((args->arg_count != 3) ||
@@ -331,9 +328,6 @@ my_bool levenshtein_k_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
  * column (-r) (matrix which could be used to do the traceback)
  *
  */
-
-
-
 longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
   char *s = args->args[0];
   char *t = args->args[1];
@@ -371,14 +365,12 @@ longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *er
   int currentrow;
   int lastrow;
 
-
   /* Initialization */
 
   //currentrow = 0
   int i;
   for (i = lsize; i < stripsize; i++) //start from diagonal cell
     d[i] = i - lsize;
-
 
   /* Recurrence */
 
@@ -447,6 +439,7 @@ longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *er
   return (longlong) d[lastrow + lsize + r]; //d[n, m]
 }
 
+//-------------------------------------------------------------------------
 
 my_bool levenshtein_k_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
   if ((args->arg_count != 3) ||
