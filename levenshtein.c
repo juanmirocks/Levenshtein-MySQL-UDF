@@ -68,10 +68,8 @@ inline int minimum(int a, int b, int c) {
 }
 
 inline int maximum(int a, int b) {
-  int max = a;
-  if (b > max)
-    max = b;
-  return max;
+  if (a > b) return a;
+  else return b;
 }
 
 /**
