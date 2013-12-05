@@ -16,12 +16,17 @@
  * CREATE FUNCTION levenshtein_ratio RETURNS REAL SONAME 'levenshtein.so';
  * CREATE FUNCTION levenshtein_k_ratio RETURNS REAL SONAME 'levenshtein.so';
  *
+ * -------------------------------------------------------------------------
  *
  * Some credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
  *
  * Other contributors:
  * * popthestack
  * * lilobase
+ *
+ * -------------------------------------------------------------------------
+ *
+ * See MySQL UDF documentation pages for details on the implementation of UDF functions.
  *
  */
 
@@ -49,11 +54,6 @@ typedef long long longlong;
 #include <ctype.h>
 
 #ifdef HAVE_DLOPEN
-
-/*
- * See MySQL UDF documentation pages for details on the implementation of UDF functions.
- *
- */
 
 /* (Expected) maximum number of digits to return */
 #define LEVENSHTEIN_MAX 3
