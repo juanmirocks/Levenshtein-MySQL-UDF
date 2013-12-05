@@ -20,7 +20,8 @@
  * Some credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
  *
  * Other contributors:
- * - popthestack
+ * * popthestack
+ * * lilobase
  *
  */
 
