@@ -489,13 +489,15 @@ double levenshtein_k_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char
 
   int n = (s == NULL) ? 0 : args->lengths[0];
   int m = (t == NULL) ? 0 : args->lengths[1];
+  double maxlen = maximum(n, m);
+  if (maxlen == 0)
+    return 0.0;
 
   double dist = (double) levenshtein_k(initid, args, is_null, error);
-  double maxlen = maximum(n, m);
-  if(dist > k) return 0.0;
-
-  if (maxlen == 0) return 0.0;
-  else return 1.0 - dist/maxlen;
+  if (dist > k)
+    return 0.0;
+  else
+    return 1.0 - dist/maxlen;
 }
 
 
