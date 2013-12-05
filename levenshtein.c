@@ -29,7 +29,7 @@
 /* STANDARD is defined, don't use any mysql functions */
 #include <string.h>
 #ifdef __WIN__
-typedef unsigned __int64 ulonglong;	/* Microsofts 64 bit types */
+typedef unsigned __int64 ulonglong; /* Microsofts 64 bit types */
 typedef __int64 longlong;
 #else
 typedef unsigned long long ulonglong;
@@ -48,15 +48,31 @@ typedef long long longlong;
 #include <mysql.h>
 #include <ctype.h>
 
-
 #ifdef HAVE_DLOPEN
 
-
 /*
- * See MySQL UDF documentation pages for details on their implementation.
+ * See MySQL UDF documentation pages for details on the implementation of UDF functions.
  *
  */
 
+/* (Expected) maximum number of digits to return */
+#define LEVENSHTEIN_MAX 3
+
+inline int minimum(int a, int b, int c) {
+  int min = a;
+  if (b < min)
+    min = b;
+  if (c < min)
+    min = c;
+  return min;
+}
+
+inline int maximum(int a, int b) {
+  int max = a;
+  if (b > max)
+    max = b;
+  return max;
+}
 
 /**
  * Levenshtein distance
@@ -69,10 +85,9 @@ typedef long long longlong;
  * @space O(nm)
  */
 
-my_bool		levenshtein_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void		levenshtein_deinit(UDF_INIT *initid);
-longlong 	levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
+my_bool  levenshtein_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+void     levenshtein_deinit(UDF_INIT *initid);
+longlong levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 
 /**
@@ -86,11 +101,9 @@ longlong 	levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *err
  * @time O(kl), linear; where l = min(n, m)
  * @space O(k), constant
  */
-
-my_bool 	levenshtein_k_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void		levenshtein_k_deinit(UDF_INIT *initid);
-longlong 	levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
-
+my_bool  levenshtein_k_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+void     levenshtein_k_deinit(UDF_INIT *initid);
+longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 
 /**
@@ -103,8 +116,7 @@ longlong 	levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *e
  * @time O(nm), quadratic
  * @space O(nm)
  */
-
-my_bool   levenshtein_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+my_bool levenshtein_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void    levenshtein_ratio_deinit(UDF_INIT *initid);
 double  levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
@@ -120,16 +132,12 @@ double  levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char 
  * @time O(kl), linear: where 1 = min(n, m)
  * @space O(k), constant
  */
-
 my_bool levenshtein_k_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void    levenshtein_k_ratio_deinit(UDF_INIT *initid);
 double  levenshtein_k_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 
-//(Expected) maximum number of digits to return
-#define LEVENSHTEIN_MAX 3
-
-
+//-------------------------------------------------------------------------
 
 
 my_bool levenshtein_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
@@ -153,31 +161,10 @@ my_bool levenshtein_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
   return 0;
 }
 
-
 void levenshtein_deinit(UDF_INIT *initid) {
-  if (initid->ptr != NULL) {
+  if (initid->ptr != NULL)
     free(initid->ptr);
-  }
 }
-
-
-inline int minimum(int a, int b, int c) {
-  int min = a;
-  if (b < min)
-    min = b;
-  if (c < min)
-    min = c;
-  return min;
-}
-
-
-inline int maximum(int a, int b) {
-  int max = a;
-  if (b > max)
-    max = b;
-  return max;
-}
-
 
 longlong levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
   const char *s = args->args[0];
@@ -204,7 +191,6 @@ longlong levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *erro
   for (j = 0; j < m; j++)
     d[n * j] = j;
 
-
   /* Recurrence */
 
   int p, h; //indices for d matrix seen as a vector, see below
@@ -218,14 +204,14 @@ longlong levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *erro
       p += n; // d[p] = d[i,j], p = (j * n + i)
 
       if (s[im1] == t[jm1]) {
-	d[p] = d[h-1]; //no operation required, d[i-1,j-1]
+        d[p] = d[h-1]; //no operation required, d[i-1,j-1]
       }
 
       else {
-	d[p] = minimum(d[p-1], 	//deletion, d[i-1, j]
-		       d[h], 	//insertion, d[i, j-1]
-		       d[h-1]	//substitution, d[i-1,j-1]
-		       ) + 1; 	//can put +1 outside because the cost is the same
+        d[p] = minimum(d[p-1],  //deletion, d[i-1, j]
+                       d[h],  //insertion, d[i, j-1]
+                       d[h-1] //substitution, d[i-1,j-1]
+                       ) + 1;  //can put +1 outside because the cost is the same
       }
 
       jm1 = j;
@@ -261,13 +247,10 @@ my_bool levenshtein_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message) 
   return 0;
 }
 
-
 void levenshtein_ratio_deinit(UDF_INIT *initid) {
-  if (initid->ptr != NULL) {
+  if (initid->ptr != NULL)
     free(initid->ptr);
-  }
 }
-
 
 double levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
   const char *s = args->args[0];
@@ -299,15 +282,12 @@ my_bool levenshtein_k_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
   return 0;
 }
 
-
 //Not necessary
 //
 /* void levenshtein_k_deinit(UDF_INIT *initid) { */
 /*   //nothing */
 /*   fflush(stderr); //for debugging */
 /* } */
-
-
 
 /*
  * 1st observation: time O(kl)
@@ -429,26 +409,26 @@ longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *er
     jm1 = bl - 1;
     for (j = bl; j <= br; j++) {
       if (0 == j) //postponed part of initialization
-  	d[currentrow + jv] = i;
+        d[currentrow + jv] = i;
       else {
-	//By observation 3, the indices change for the lastrow (always +1)
-  	if (s[im1] == t[jm1]) {
-  	  d[currentrow + jv] = d[lastrow + jv];
-	}
-  	else {
-	  //get the minimum of these 3 operations
-	  a = (0 == jv) ? ignore : d[currentrow + jv - 1]; //deletion
-	  b = (stripsizem1 == jv) ? ignore : d[lastrow + jv + 1]; //insertion
-	  c = d[lastrow + jv]; //substitution
+        //By observation 3, the indices change for the lastrow (always +1)
+        if (s[im1] == t[jm1]) {
+          d[currentrow + jv] = d[lastrow + jv];
+        }
+        else {
+          //get the minimum of these 3 operations
+          a = (0 == jv) ? ignore : d[currentrow + jv - 1]; //deletion
+          b = (stripsizem1 == jv) ? ignore : d[lastrow + jv + 1]; //insertion
+          c = d[lastrow + jv]; //substitution
 
-	  min = a;
-	  if (b < min)
-	    min = b;
-	  if (c < min)
-	    min = c;
+          min = a;
+          if (b < min)
+            min = b;
+          if (c < min)
+            min = c;
 
-	  d[currentrow + jv] = min + 1;
-  	}
+          d[currentrow + jv] = min + 1;
+        }
       }
       jv++;
       jm1 = j;
@@ -500,6 +480,5 @@ double levenshtein_k_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char
   else
     return 1.0 - dist/maxlen;
 }
-
 
 #endif /* HAVE_DLOPEN */
