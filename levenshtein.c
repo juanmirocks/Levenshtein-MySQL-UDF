@@ -114,10 +114,10 @@ double  levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char 
  * @param s string 1 to compare, length n
  * @param t string 2 to compare, length m
  * @param k maximum threshold
- * @result levenshtein ratio between s and t and t or >k (not specified) if this is greater than k)
- * 
+ * @result levenshtein ratio between s and t if (levenshtein distance <= k), otherwise 0.0
+ *
  * @time O(kl), linear: where 1 = min(n, m)
- * @space O(k), contant
+ * @space O(k), constant
  */
 
 my_bool levenshtein_k_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
