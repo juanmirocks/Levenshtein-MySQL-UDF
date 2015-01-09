@@ -1,6 +1,30 @@
 /*
- * @author Juan Miguel Cejuela, @jmcejuela
+ * Copyright 2012-2015 Juan Miguel Cejuela (@jmcejuela)
  *
+ * -------------------------------------------------------------------------
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * -------------------------------------------------------------------------
+ *
+ * Some credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
+ *
+ * Other contributors:
+ *   - popthestack
+ *   - lilobase
+ *
+ * -------------------------------------------------------------------------
  *
  * INSTALLATION
  *
@@ -16,15 +40,6 @@
  * CREATE FUNCTION levenshtein_ratio RETURNS REAL SONAME 'levenshtein.so';
  * CREATE FUNCTION levenshtein_k_ratio RETURNS REAL SONAME 'levenshtein.so';
  *
- * -------------------------------------------------------------------------
- *
- * Some credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
- *
- * Other contributors:
- * * popthestack
- * * lilobase
- *
- * -------------------------------------------------------------------------
  *
  * See MySQL UDF documentation pages for details on the implementation of UDF functions.
  *
