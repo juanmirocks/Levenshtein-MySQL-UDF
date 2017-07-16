@@ -73,7 +73,7 @@ typedef long long longlong;
 /* (Expected) maximum number of digits to return */
 #define LEVENSHTEIN_MAX 3
 
-inline int minimum(int a, int b, int c) {
+static inline int minimum(int a, int b, int c) {
   int min = a;
   if (b < min)
     min = b;
@@ -82,7 +82,7 @@ inline int minimum(int a, int b, int c) {
   return min;
 }
 
-inline int maximum(int a, int b) {
+static inline int maximum(int a, int b) {
   if (a > b) return a;
   else return b;
 }
