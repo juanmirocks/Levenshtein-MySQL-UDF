@@ -20,6 +20,11 @@ select 0 = levenshtein_ratio(null, '') union
 select 0 = levenshtein_ratio('', null) union
 select 0 = levenshtein_ratio('', '') union
 
+select 0 = levenshtein_k_ratio(null, null, 0) union
+select 0 = levenshtein_k_ratio(null, '', 0) union
+select 0 = levenshtein_k_ratio('', null, 0) union
+select 0 = levenshtein_k_ratio('', '', 0) union
+
 -- Test levenshtein_k
 
 select 0 = levenshtein_k('p', 'p', 0) union
