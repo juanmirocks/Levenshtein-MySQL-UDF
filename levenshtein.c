@@ -2,7 +2,7 @@
  * Copyright Juan Miguel Cejuela (@juanmirocks - http://juanmi.rocks)
  *
  * Last update: 2017-08-20
- * Version: 2.0.0
+ * Version: 2.0.1
  *
  * -------------------------------------------------------------------------
  *
