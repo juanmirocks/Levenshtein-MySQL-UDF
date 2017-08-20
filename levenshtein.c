@@ -1,6 +1,9 @@
 /*
  * Copyright Juan Miguel Cejuela (@juanmirocks - http://juanmi.rocks)
  *
+ * Last update: 2017-08-20
+ * Version: 2.0.0
+ *
  * -------------------------------------------------------------------------
  *
  * This program is free software: you can redistribute it and/or modify
