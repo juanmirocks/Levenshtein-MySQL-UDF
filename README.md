@@ -69,7 +69,9 @@ select 0 = levenshtein_k_ratio('maneuver', 'manoeuvre', 1); -- 0 because the dis
 
 Your contributions are very much welcome!
 
-Please before making a pull request, run the unit tests file, which should return 1 at the end:
+Please before making a pull request, run the unit tests file.
+
+This should return 1 at the end:
 
 ```shell
 mysql -root < unittest.sql  # Change your username & password as needed
