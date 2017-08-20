@@ -14,7 +14,7 @@ Features:
 First you need to compile the library and tell MySQL/MariaDB about it:
 
 ```shell
-(Unix) gcc -o levenshtein.so -shared levenshtein.c `mysql_config --include`
+(Unix) gcc -o levenshtein.so -shared levenshtein.c `mysql_config --include`  # On Linux x64 you may need to add the -fPIC flag
 (macOS) gcc -bundle -o levenshtein.so levenshtein.c `mysql_config --include`
 plugin_dir=$(mysql -u root -p pass -e 'select @@plugin_dir;' | grep -v '@')   # This declares your MySQL's plugin directory where the compiled library should be put to. Adjust your user name & password as needed
 cp levenshtein.so $plugin_dir # You may need sudo
