@@ -5,36 +5,42 @@ MySQL UDF functions implemented in C for:
 * Levenshtein ratio (syntactic sugar for: `levenshtein_ratio(s, t) = 1 - levenshtein(s, t) / max(s.length, t.length)`)
 * k-bounded Levenshtein ratio
 
-## Quick install guide
+## Install
 
-To install this UDF using MySQL run:
+First you need to compile the library and tell MySQL/MariaDB about it:
 
-```bash
-gcc -o levenshtein.so -fPIC -shared levenshtein.c -I /usr/include/mysql/
-plugin_dir=$(mysql -u root -p pass -e 'select @@plugin_dir;' | grep -v '@')   # adjust your user name & add password if needed
-sudo cp levenshtein.so $plugin_dir
+```shell
+(Unix) gcc -o levenshtein.so -shared levenshtein.c `mysql_config --include`
+(macOS) gcc -bundle -o levenshtein.so levenshtein.c `mysql_config --include`
+plugin_dir=$(mysql -u root -p pass -e 'select @@plugin_dir;' | grep -v '@')   # This declares your MySQL's plugin directory where the compiled library should be put to. Adjust your user name & password as needed
+cp levenshtein.so $plugin_dir # You may need sudo
 ```
 
 For newer versions of MariaDB you will simply need to replace mysql root credentials with `sudo` call.
 
-```bash
+```shell
 plugin_dir=$(sudo mysql -e 'select @@plugin_dir;' | grep -v '@')
 ```
 
+Then in a console, run:
 
-To use the UDF, run:
 ```sql
-CREATE FUNCTION levenshtein RETURNS INTEGER SONAME 'levenshtein.so'
+CREATE FUNCTION levenshtein RETURNS INT SONAME 'levenshtein.so';
+CREATE FUNCTION levenshtein_k RETURNS INT SONAME 'levenshtein.so';
+CREATE FUNCTION levenshtein_ratio RETURNS REAL SONAME 'levenshtein.so';
+CREATE FUNCTION levenshtein_k_ratio RETURNS REAL SONAME 'levenshtein.so';
 ```
 
-To create and use the function, you need `CREATE ROUTINE, EXECUTE` privileges.
+That should be all 🐬!
 
+### Note
 
-For MariaDB you have to grant additional privileges on `mysql` database. Here is an example of privilages allowing droping, altering, creating and using functions:
+Just in case the last SQL statements failed, consider that to create and use UDF functions, you need `CREATE ROUTINE, EXECUTE` privileges.
+
+For MariaDB you have to grant additional privileges on `mysql` database. Here is an example of privileges allowing dropping, altering, creating and using functions:
 ```sql
 GRANT INSERT, DELETE, DROP ROUTINE, CREATE ROUTINE, ALTER ROUTINE, EXECUTE ON mysql.* TO 'user'@'%';
 ```
 
 
-For more instructions, see [levenshtein.c file](https://github.com/jmcejuela/Levenshtein-MySQL-UDF/blob/master/levenshtein.c).
 For more details on setting up UDF in MySQL see: [UDF Compiling and Installing](https://dev.mysql.com/doc/refman/5.7/en/udf-compiling.html)
