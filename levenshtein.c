@@ -20,28 +20,19 @@
  *
  * Some credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
  *
- * Other contributors:
- *   - popthestack
- *   - lilobase
+ * Thanks to the contributors! (on GitHub):
+ *
+ *   - @popthestack
+ *   - @lilobase
+ *   - @peterhost
+ *   - @krassowski
+ *   - ... see complete list here: https://github.com/juanmirocks/Levenshtein-MySQL-UDF/graphs/contributors
  *
  * -------------------------------------------------------------------------
  *
  * INSTALLATION
  *
- * gcc -o levenshtein.so -shared levenshtein.c -I /usr/include/mysql/
- * (mac) gcc -bundle -o levenshtein.so levenshtein.c -I/usr/local/mysql/include
- *
- * Put the shared library as described in: http://dev.mysql.com/doc/refman/5.0/en/udf-compiling.html
- *
- * Afterwards in SQL:
- *
- * CREATE FUNCTION levenshtein RETURNS INT SONAME 'levenshtein.so';
- * CREATE FUNCTION levenshtein_k RETURNS INT SONAME 'levenshtein.so';
- * CREATE FUNCTION levenshtein_ratio RETURNS REAL SONAME 'levenshtein.so';
- * CREATE FUNCTION levenshtein_k_ratio RETURNS REAL SONAME 'levenshtein.so';
- *
- *
- * See MySQL UDF documentation pages for details on the implementation of UDF functions.
+ * See: https://github.com/juanmirocks/Levenshtein-MySQL-UDF
  *
  */
 
