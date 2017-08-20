@@ -35,7 +35,7 @@ CREATE FUNCTION levenshtein_k_ratio RETURNS REAL SONAME 'levenshtein.so';
 
 That should be all 🐬 ᶘ ᵒᴥᵒᶅ !
 
-### Note
+#### Note
 
 Just in case the last SQL statements failed, consider that to create and use UDF functions, you need `CREATE ROUTINE, EXECUTE` privileges.
 
