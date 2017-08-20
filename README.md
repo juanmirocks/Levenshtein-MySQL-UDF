@@ -2,7 +2,7 @@ MySQL/MariaDB UDF functions implemented in C for:
 
 * [General Levenshtein algorithm](https://en.wikipedia.org/wiki/Levenshtein_distance)
 * k-bounded Levenshtein distance algorithm (linear time, constant space).
-  * Info: this is when you only care about the distance if it's smaller or equal than your given _k_ (e.g. to test if the spelling difference between two words is of maximum 2). In this case, the algorithim runs faster and in less memory.
+  * Info: this is when you only care about the distance if it's smaller or equal than your given _k_ (e.g. to test if the spelling difference between two words is of maximum 2). In this case, the algorithm runs faster while using less memory.
 * Levenshtein ratio
   * Info: this is syntactic sugar for `levenshtein_ratio(s, t) = 1 - levenshtein(s, t) / max(s.length, t.length)`)
 * k-bounded Levenshtein ratio
