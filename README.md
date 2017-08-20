@@ -1,8 +1,10 @@
-MySQL UDF functions implemented in C for:
+MySQL/MariaDB UDF functions implemented in C for:
 
-* General Levenshtein algorithm
-* k-bounded Levenshtein distance algorithm (linear time, constant space),
-* Levenshtein ratio (syntactic sugar for: `levenshtein_ratio(s, t) = 1 - levenshtein(s, t) / max(s.length, t.length)`)
+* [General Levenshtein algorithm](https://en.wikipedia.org/wiki/Levenshtein_distance)
+* k-bounded Levenshtein distance algorithm (linear time, constant space).
+  * Info: this is when you only care about the distance if it's smaller or equal than your given _k_ (e.g. to test if the spelling difference between two words is of maximum 2). In this case, the algorithim runs faster and in less memory.
+* Levenshtein ratio
+  * Info: this is syntactic sugar for `levenshtein_ratio(s, t) = 1 - levenshtein(s, t) / max(s.length, t.length)`)
 * k-bounded Levenshtein ratio
 
 ## Install
@@ -31,7 +33,7 @@ CREATE FUNCTION levenshtein_ratio RETURNS REAL SONAME 'levenshtein.so';
 CREATE FUNCTION levenshtein_k_ratio RETURNS REAL SONAME 'levenshtein.so';
 ```
 
-That should be all 🐬!
+That should be all 🐬 ᶘ ᵒᴥᵒᶅ !
 
 ### Note
 
@@ -43,4 +45,4 @@ GRANT INSERT, DELETE, DROP ROUTINE, CREATE ROUTINE, ALTER ROUTINE, EXECUTE ON my
 ```
 
 
-For more details on setting up UDF in MySQL see: [UDF Compiling and Installing](https://dev.mysql.com/doc/refman/5.7/en/udf-compiling.html)
+For more details on setting up UDFs in MySQL see: [UDF Compiling and Installing](https://dev.mysql.com/doc/refman/5.7/en/udf-compiling.html)
