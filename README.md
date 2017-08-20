@@ -1,4 +1,6 @@
-MySQL/MariaDB UDF functions implemented in C for:
+# MySQL/MariaDB UDF functions implemented in C
+
+Features:
 
 * [General Levenshtein algorithm](https://en.wikipedia.org/wiki/Levenshtein_distance)
 * k-bounded Levenshtein distance algorithm (linear time, constant space).
