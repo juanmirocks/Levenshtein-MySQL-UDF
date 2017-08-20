@@ -74,5 +74,5 @@ Please before making a pull request, run the unit tests file.
 This should return 1 at the end:
 
 ```shell
-mysql -root < unittest.sql  # Change your username & password as needed
+mysql -uroot < unittest.sql  # Change your username & password as needed
 ```
