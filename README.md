@@ -50,7 +50,7 @@ GRANT INSERT, DELETE, DROP ROUTINE, CREATE ROUTINE, ALTER ROUTINE, EXECUTE ON my
 For more details on setting up UDFs in MySQL see: [UDF Compiling and Installing](https://dev.mysql.com/doc/refman/5.7/en/udf-compiling.html)
 
 
-## RUN
+## Run
 
 For example:
 
