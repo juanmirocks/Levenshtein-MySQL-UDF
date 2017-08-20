@@ -20,28 +20,19 @@
  *
  * Some credit for simple levenshtein to: Joshua Drew, SpinWeb Net Designs
  *
- * Other contributors:
- *   - popthestack
- *   - lilobase
+ * Thanks to the contributors! (on GitHub):
+ *
+ *   - @popthestack
+ *   - @lilobase
+ *   - @peterhost
+ *   - @krassowski
+ *   - ... see complete list here: https://github.com/juanmirocks/Levenshtein-MySQL-UDF/graphs/contributors
  *
  * -------------------------------------------------------------------------
  *
  * INSTALLATION
  *
- * gcc -o levenshtein.so -shared levenshtein.c -I /usr/include/mysql/
- * (mac) gcc -bundle -o levenshtein.so levenshtein.c -I/usr/local/mysql/include
- *
- * Put the shared library as described in: http://dev.mysql.com/doc/refman/5.0/en/udf-compiling.html
- *
- * Afterwards in SQL:
- *
- * CREATE FUNCTION levenshtein RETURNS INT SONAME 'levenshtein.so';
- * CREATE FUNCTION levenshtein_k RETURNS INT SONAME 'levenshtein.so';
- * CREATE FUNCTION levenshtein_ratio RETURNS REAL SONAME 'levenshtein.so';
- * CREATE FUNCTION levenshtein_k_ratio RETURNS REAL SONAME 'levenshtein.so';
- *
- *
- * See MySQL UDF documentation pages for details on the implementation of UDF functions.
+ * See: https://github.com/juanmirocks/Levenshtein-MySQL-UDF
  *
  */
 
@@ -73,7 +64,7 @@ typedef long long longlong;
 /* (Expected) maximum number of digits to return */
 #define LEVENSHTEIN_MAX 3
 
-inline int minimum(int a, int b, int c) {
+static inline int minimum(int a, int b, int c) {
   int min = a;
   if (b < min)
     min = b;
@@ -82,7 +73,7 @@ inline int minimum(int a, int b, int c) {
   return min;
 }
 
-inline int maximum(int a, int b) {
+static inline int maximum(int a, int b) {
   if (a > b) return a;
   else return b;
 }
