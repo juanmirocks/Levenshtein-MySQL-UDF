@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Juan Miguel Cejuela (@jmcejuela)
+ * Copyright Juan Miguel Cejuela (@juanmirocks - http://juanmi.rocks)
  *
  * -------------------------------------------------------------------------
  *
