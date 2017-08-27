@@ -16,15 +16,9 @@ First you need to compile the library and tell MySQL/MariaDB about it:
 ```shell
 (Unix) gcc -o levenshtein.so -shared levenshtein.c `mysql_config --include`  # On Linux x64 you may need to add the -fPIC flag
 (macOS) gcc -bundle -o levenshtein.so levenshtein.c `mysql_config --include`
-plugin_dir=$(mysql -u root -p pass -e 'select @@plugin_dir;' | grep -v '@')   # This declares your MySQL's plugin directory where the compiled library should be put to. Adjust your user name & password as needed
-cp levenshtein.so $plugin_dir # You may need sudo
+cp levenshtein.so `mysql_config --plugindir` # You may need sudo
 ```
 
-For newer versions of MariaDB you will simply need to replace mysql root credentials with `sudo` call.
-
-```shell
-plugin_dir=$(sudo mysql -e 'select @@plugin_dir;' | grep -v '@')
-```
 
 Then in a console, run:
 
