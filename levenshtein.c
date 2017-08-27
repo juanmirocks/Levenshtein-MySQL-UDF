@@ -1,8 +1,9 @@
 /*
  * Copyright Juan Miguel Cejuela (@juanmirocks - http://juanmi.rocks)
  *
- * Last update: 2017-08-20
- * Version: 2.0.1
+ * Last update: 2017-08-27
+ * Version: 2.0.2
+ * Home: https://github.com/juanmirocks/Levenshtein-MySQL-UDF
  *
  * -------------------------------------------------------------------------
  *
