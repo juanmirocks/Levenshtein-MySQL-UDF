@@ -14,10 +14,17 @@ Features:
 First you need to compile the library and tell MySQL/MariaDB about it:
 
 ```shell
-(Unix) gcc -o levenshtein.so -shared levenshtein.c `mysql_config --include`  # On Linux x64 you may need to add the -fPIC flag
-(macOS) gcc -bundle -o levenshtein.so levenshtein.c `mysql_config --include`
+# Unix; on Linux x64 you may need to add the -fPIC flag
+gcc -o levenshtein.so -shared levenshtein.c `mysql_config --include`  
+
+# macOS
+gcc -bundle -o levenshtein.so levenshtein.c `mysql_config --include`
+
+# all systems
 cp levenshtein.so `mysql_config --plugindir` # You may need sudo
 ```
+
+_If you run into issues, please take a look at [this workaround](https://github.com/juanmirocks/Levenshtein-MySQL-UDF/issues/12#issuecomment-384419463) or [this](https://github.com/juanmirocks/Levenshtein-MySQL-UDF/issues/16#issuecomment-682452839)._
 
 
 Then in a console, run:
