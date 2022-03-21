@@ -1,7 +1,7 @@
 /*
  * Copyright Juan Miguel Cejuela (@juanmirocks - http://juanmi.rocks)
  *
- * Last update: 2017-08-27
+ * Last update: 2012-03-21
  * Version: 2.0.2
  * Home: https://github.com/juanmirocks/Levenshtein-MySQL-UDF
  *
@@ -44,14 +44,24 @@
 /* STANDARD is defined, don't use any mysql functions */
 #include <string.h>
 #ifdef __WIN__
-typedef unsigned __int64 ulong long; /* Microsofts 64 bit types */
-typedef __int64 long long;
+typedef unsigned __int64 ulonglong; /* Microsofts 64 bit types */
+typedef __int64 longlong;
 #else
-typedef unsigned long long ulong long;
-typedef long long long long;
+typedef unsigned long long ulonglong;
+typedef long long longlong;
 #endif /*__WIN__*/
 #else
+#include "mysql_version.h"
+#if MYSQL_VERSION_ID > 80000
 #include <mysql.h>
+typedef bool my_bool;
+typedef long long longlong;
+#define HAVE_DLOPEN 1
+#else
+#include <my_global.h>
+#include <my_sys.h>
+#include <mysql.h>
+#endif
 #if defined(MYSQL_SERVER)
 #include <m_string.h>
 #else
@@ -59,8 +69,9 @@ typedef long long long long;
 #include <string.h>
 #endif
 #endif
-#include <mysql.h>
 #include <ctype.h>
+
+#ifdef HAVE_DLOPEN
 
 /* (Expected) maximum number of digits to return */
 #define LEVENSHTEIN_MAX 3
@@ -89,9 +100,9 @@ static inline int maximum(int a, int b) {
  * @time O(nm), quadratic
  * @space O(nm)
  */
-bool  levenshtein_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+my_bool  levenshtein_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void     levenshtein_deinit(UDF_INIT *initid);
-long long levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 
 /**
@@ -105,9 +116,9 @@ long long levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *err
  * @time O(kl), linear; where l = min(n, m)
  * @space O(k), constant
  */
-bool  levenshtein_k_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+my_bool  levenshtein_k_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void     levenshtein_k_deinit(UDF_INIT *initid);
-long long levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
 
 /**
@@ -120,7 +131,7 @@ long long levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *e
  * @time O(nm), quadratic
  * @space O(nm)
  */
-bool levenshtein_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+my_bool levenshtein_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void    levenshtein_ratio_deinit(UDF_INIT *initid);
 double  levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
@@ -136,7 +147,7 @@ double  levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char 
  * @time O(kl), linear: where 1 = min(n, m)
  * @space O(k), constant
  */
-bool levenshtein_k_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
+my_bool levenshtein_k_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
 void    levenshtein_k_ratio_deinit(UDF_INIT *initid);
 double  levenshtein_k_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
 
@@ -144,7 +155,7 @@ double  levenshtein_k_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, cha
 //-------------------------------------------------------------------------
 
 
-bool levenshtein_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+my_bool levenshtein_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
   if ((args->arg_count != 2) ||
       (args->arg_type[0] != STRING_RESULT || args->arg_type[1] != STRING_RESULT)) {
     strcpy(message, "Function requires 2 arguments, (string, string)");
@@ -170,7 +181,7 @@ void levenshtein_deinit(UDF_INIT *initid) {
     free(initid->ptr);
 }
 
-long long levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+longlong levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
   const char *s = args->args[0];
   const char *t = args->args[1];
 
@@ -224,12 +235,12 @@ long long levenshtein(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *err
     im1 = i;
   }
 
-  return (long long) d[p];
+  return (longlong) d[p];
 }
 
 //-------------------------------------------------------------------------
 
-bool levenshtein_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+my_bool levenshtein_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
   if ((args->arg_count != 2) ||
       (args->arg_type[0] != STRING_RESULT || args->arg_type[1] != STRING_RESULT)) {
     strcpy(message, "Function requires 2 arguments, (string, string)");
@@ -271,7 +282,7 @@ double levenshtein_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *
 
 //-------------------------------------------------------------------------
 
-bool levenshtein_k_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+my_bool levenshtein_k_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
   if ((args->arg_count != 3) ||
       (args->arg_type[0] != STRING_RESULT || args->arg_type[1] != STRING_RESULT || args->arg_type[2] != INT_RESULT)) {
     strcpy(message, "Function requires 3 arguments, (string, string, int)");
@@ -335,7 +346,7 @@ bool levenshtein_k_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
  * column (-r) (matrix which could be used to do the traceback)
  *
  */
-long long levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
+longlong levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error) {
   char *s = args->args[0];
   char *t = args->args[1];
 
@@ -443,12 +454,12 @@ long long levenshtein_k(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *e
   }
 
   //only here if levenhstein(s, t) <= k
-  return (long long) d[lastrow + lsize + r]; //d[n, m]
+  return (longlong) d[lastrow + lsize + r]; //d[n, m]
 }
 
 //-------------------------------------------------------------------------
 
-bool levenshtein_k_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
+my_bool levenshtein_k_ratio_init(UDF_INIT *initid, UDF_ARGS *args, char *message) {
   if ((args->arg_count != 3) ||
       (args->arg_type[0] != STRING_RESULT || args->arg_type[1] != STRING_RESULT || args->arg_type[2] != INT_RESULT)) {
     strcpy(message, "Function requires 3 arguments, (string, string, int)");
@@ -478,3 +489,5 @@ double levenshtein_k_ratio(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char
   else
     return 1.0 - dist/maxlen;
 }
+
+#endif /* HAVE_DLOPEN */
