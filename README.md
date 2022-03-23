@@ -36,7 +36,7 @@ CREATE FUNCTION levenshtein_ratio RETURNS REAL SONAME 'levenshtein.so';
 CREATE FUNCTION levenshtein_k_ratio RETURNS REAL SONAME 'levenshtein.so';
 ```
 
-That should be all 🐬 ᵒᴥᵒᶅ !
+That should be all 🐬 🦭 !
 
 #### Note
 
