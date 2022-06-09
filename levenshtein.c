@@ -1,7 +1,7 @@
 /*
  * Copyright Juan Miguel Cejuela (@juanmirocks - http://juanmi.rocks)
  *
- * Last update: 2017-08-27
+ * Last update: 2021-03-21
  * Version: 2.0.2
  * Home: https://github.com/juanmirocks/Levenshtein-MySQL-UDF
  *
@@ -51,8 +51,17 @@ typedef unsigned long long ulonglong;
 typedef long long longlong;
 #endif /*__WIN__*/
 #else
+#include "mysql_version.h"
+#if MYSQL_VERSION_ID > 80000
+#include <mysql.h>
+typedef bool my_bool;
+typedef long long longlong;
+#define HAVE_DLOPEN 1
+#else
 #include <my_global.h>
 #include <my_sys.h>
+#include <mysql.h>
+#endif
 #if defined(MYSQL_SERVER)
 #include <m_string.h>
 #else
@@ -60,7 +69,6 @@ typedef long long longlong;
 #include <string.h>
 #endif
 #endif
-#include <mysql.h>
 #include <ctype.h>
 
 #ifdef HAVE_DLOPEN
